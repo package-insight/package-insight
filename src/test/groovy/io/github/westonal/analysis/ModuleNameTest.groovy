@@ -9,11 +9,11 @@ class ModuleNameTest {
 
     @Test
     void assertEqualityContract_Equal() {
-        assertEquals(new ModuleName(name: "A"), new ModuleName(name: "A"))
+        assertEquals(new ModuleName(name: 'A'), new ModuleName(name: 'A'))
     }
 
     @Test
     void assertEqualityContract_NotEqual() {
-        assertNotEquals(new ModuleName(name: "A"), new ModuleName(name: "B"))
+        assertNotEquals(new ModuleName(name: 'A'), new ModuleName(name: 'B'))
     }
 }
