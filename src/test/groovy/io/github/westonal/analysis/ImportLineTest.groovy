@@ -2,6 +2,7 @@ package io.github.westonal.analysis
 
 import org.junit.Test
 
+import static groovy.test.GroovyAssert.shouldFail
 import static org.junit.Assert.*
 
 class ImportLineTest {
@@ -20,6 +21,14 @@ class ImportLineTest {
                 new ImportLine(packageName: new PackageName(name: 'A')),
                 new ImportLine(packageName: new PackageName(name: 'B'))
         )
+    }
+
+    @Test
+    void immutable() {
+        shouldFail {
+            //noinspection GrFinalVariableAccess, GroovyAccessibility
+            new ImportLine(packageName: new PackageName(name: 'B')).lineNo = 10
+        }
     }
 
     @Test
