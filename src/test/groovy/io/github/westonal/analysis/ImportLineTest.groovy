@@ -109,4 +109,28 @@ class ImportLineTest {
                 ImportLine.fromLine(15, 'import  static  com.example.Class  ;  ')
         )
     }
+
+    @Test
+    void fromStarImportJavaLine() {
+        assertEquals(
+                new ImportLine(
+                        packageName: new PackageName(name: 'com.example'),
+                        lineNo: 10,
+                        originalImport: 'import com.example.*;'
+                ),
+                ImportLine.fromLine(10, 'import com.example.*;')
+        )
+    }
+
+    @Test
+    void fromStarImportKotlinLine() {
+        assertEquals(
+                new ImportLine(
+                        packageName: new PackageName(name: 'com.example'),
+                        lineNo: 10,
+                        originalImport: 'import com.example.*'
+                ),
+                ImportLine.fromLine(10, 'import com.example.*')
+        )
+    }
 }

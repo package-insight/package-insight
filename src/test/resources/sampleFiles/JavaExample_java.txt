@@ -1,0 +1,14 @@
+/*
+ Licence info
+ */
+package io.github.example;
+
+import java.io.BufferedReader;
+import java.io.Reader;
+import java.awt.*;
+
+import static java.beans.Beans.getInstanceOf;
+
+public class JavaExample {
+
+}

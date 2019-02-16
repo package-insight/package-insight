@@ -21,6 +21,7 @@ class ImportLine {
     }
 
     static String extractFromLine(String s) {
+        if (s.endsWith(';')) s = s.substring(0, s.length() - 1)
         def split = s.split(/\s+/)
         if (split[1] == 'static') {
             trimLast(trimLast(split[2]))
@@ -30,10 +31,10 @@ class ImportLine {
     }
 
     static String trimLast(String s) {
-        s.split(/\./).takeWhile { allLower(it) }.join('.')
+        s.split(/\./).takeWhile { allLowerNonStar(it) }.join('.')
     }
 
-    static def allLower(String s) {
-        s == s.toLowerCase(Locale.US)
+    static def allLowerNonStar(String s) {
+        s != '*' && s == s.toLowerCase(Locale.US)
     }
 }

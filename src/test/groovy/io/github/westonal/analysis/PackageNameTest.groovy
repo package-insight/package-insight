@@ -21,9 +21,10 @@ class PackageNameTest {
 
     @Test
     void immutable() {
+        def name = new PackageName(name: 'A')
         shouldFail {
             //noinspection GrFinalVariableAccess, GroovyAccessibility
-            new PackageName(name: 'A').name = 'B'
+            name.name = 'B'
         }
     }
 }

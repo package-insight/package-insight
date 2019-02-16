@@ -20,9 +20,10 @@ class ModuleNameTest {
 
     @Test
     void immutable() {
+        def name = new ModuleName(name: 'A')
         shouldFail {
             //noinspection GrFinalVariableAccess, GroovyAccessibility
-            new ModuleName(name: 'A').name = 'B'
+            name.name = 'B'
         }
     }
 }
