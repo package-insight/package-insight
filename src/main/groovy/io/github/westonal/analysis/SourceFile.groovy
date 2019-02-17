@@ -9,18 +9,15 @@ class SourceFile {
     Set<PackageName> importPackages
 
     static SourceFile fromLines(String[] s) {
-        def imports = findImports(s)
-        new SourceFile(
-                packageName: findPackage(s),
-                imports: imports,
-                importPackages: toPackageSet(imports)
-        )
+        fromImports(findPackage(s), findImports(s))
     }
 
-    private static Set<PackageName> toPackageSet(ImportLine[] importLines) {
-        def names = new HashSet<PackageName>()
-        names.addAll(importLines*.packageName)
-        names
+    static SourceFile fromImports(PackageName packageName, ImportLine[] imports) {
+        new SourceFile(
+                packageName: packageName,
+                imports: imports,
+                importPackages: imports*.packageName as Set
+        )
     }
 
     private static ImportLine[] findImports(String[] strings) {
