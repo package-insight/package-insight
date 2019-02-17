@@ -41,7 +41,7 @@ class PackageTest {
     @Test
     void dependsOn() {
         def pName = new PackageName('a')
-        ImportLine[] lines = [ImportLine.fromLine(1, "import b")]
+        def lines = [ImportLine.fromLine(1, "import b")]
         def p = new Package(pName)
         p.addSourceFile(SourceFile.fromImports(pName, lines))
         assert p.dependsOn == [new PackageName('b')] as Set
@@ -50,7 +50,7 @@ class PackageTest {
     @Test
     void dependsOn2FromOneFile() {
         def pName = new PackageName('a')
-        ImportLine[] lines = [
+        def lines = [
                 ImportLine.fromLine(1, "import b"),
                 ImportLine.fromLine(2, "import c")
         ]
@@ -62,10 +62,10 @@ class PackageTest {
     @Test
     void dependsOn2FromTwoFiles() {
         def pName = new PackageName('a')
-        ImportLine[] lines1 = [
+        def lines1 = [
                 ImportLine.fromLine(1, "import b")
         ]
-        ImportLine[] lines2 = [
+        def lines2 = [
                 ImportLine.fromLine(1, "import c")
         ]
         def p = new Package(pName)
@@ -77,11 +77,11 @@ class PackageTest {
     @Test
     void dependsOn3FromTwoFilesIncludingDuplicates() {
         def pName = new PackageName('a')
-        ImportLine[] lines1 = [
+        def lines1 = [
                 ImportLine.fromLine(1, "import b"),
                 ImportLine.fromLine(2, "import d")
         ]
-        ImportLine[] lines2 = [
+        def lines2 = [
                 ImportLine.fromLine(1, "import c"),
                 ImportLine.fromLine(2, "import d")
         ]

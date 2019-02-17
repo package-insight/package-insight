@@ -12,7 +12,7 @@ class SourceFile {
         fromImports(findPackage(s), findImports(s))
     }
 
-    static SourceFile fromImports(PackageName packageName, ImportLine[] imports) {
+    static SourceFile fromImports(PackageName packageName, Collection<ImportLine> imports) {
         new SourceFile(
                 packageName: packageName,
                 imports: imports,
@@ -20,7 +20,7 @@ class SourceFile {
         )
     }
 
-    private static ImportLine[] findImports(String[] strings) {
+    private static Collection<ImportLine> findImports(String[] strings) {
         def importLines = new LinkedList<ImportLine>()
         for (int i = 0; i < strings.length; i++) {
             def line = ImportLine.fromLine(i + 1, strings[i])
