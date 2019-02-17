@@ -21,12 +21,18 @@ class ImportLine {
     }
 
     static String extractFromLine(String s) {
-        if (s.endsWith(';')) s = s.substring(0, s.length() - 1)
-        def split = s.split(/\s+/)
-        if (split[1] == 'static') {
-            trimLast(trimLast(split[2]))
-        } else {
-            trimLast(split[1])
+        try {
+            if (s.endsWith(';')) s = s.substring(0, s.length() - 1)
+            def split = s.split(/\s+/)
+            if (split[1] == 'static') {
+                trimLast(trimLast(split[2]))
+            } else {
+                trimLast(split[1])
+            }
+        }
+        catch (Exception e) {
+            println "Error with line: " + s
+            throw e
         }
     }
 

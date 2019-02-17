@@ -1,5 +1,8 @@
 package io.github.packageinsight
 
+import groovy.io.FileType
+import io.github.westonal.analysis.PackageCollection
+import io.github.westonal.analysis.SourceFile
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -17,64 +20,50 @@ class InsightPlugin implements Plugin<Project> {
             }
 
             if (project.hasProperty('android')) {
-                //println 'Android'
                 project.android.sourceSets.all { set ->
-                    //println set
-                    // it.properties.each{println it}
-                    //set.javaDirectories.each { println "  $it" }
-                    def newTask = project.task("insight${set.name.capitalize()}") {
-                        group 'Package Insight'
-                        description "Package insight for source set $set.name"
-                        doLast {
-                            println "Package insight for :$project.name Set $set.name"
-                            //set.javaDirectories.each { println "  $it" }
-                            if (set.hasProperty('java')) {
-                                println 'Java'
-                                set.java.srcDirs.each { println "  $it" }
-                            }
-                            if (set.hasProperty('kotlin')) {
-                                println 'Kotlin'
-                                set.kotlin.srcDirs.each { println "  $it" }
-                            }
-                            if (set.hasProperty('groovy')) {
-                                println 'Groovy'
-                                set.groovy.srcDirs.each { println "  $it" }
-                            }
-                        }
-                    }
-                    insight.dependsOn newTask
+                    insight.dependsOn setToTask(project, set)
                 }
             } else {
-                //println 'nonAndroid'
                 if (project.hasProperty('sourceSets')) {
                     project.sourceSets.all { set ->
-                        //println set
-                        //set.allJava.files.each { println "  $it" }
-                        //set.java.srcDirs.each { println "  $set" }
-                        def newTask = project.task("insight${set.name.capitalize()}") {
-                            group 'Package Insight'
-                            description "Package insight for source set $set.name"
-                            doLast {
-                                println "Package insight for :$project.name Set $set.name"
-                                //set.allJava.files.each { println "  $it" }
-                                if (set.hasProperty('java')) {
-                                    println 'Java'
-                                    set.java.srcDirs.each { println "  $it" }
-                                }
-                                if (set.hasProperty('kotlin')) {
-                                    println 'Kotlin'
-                                    set.kotlin.srcDirs.each { println "  $it" }
-                                }
-                                if (set.hasProperty('groovy')) {
-                                    println 'Groovy'
-                                    set.groovy.srcDirs.each { println "  $it" }
-                                }
-                            }
-                        }
-                        insight.dependsOn newTask
+                        insight.dependsOn setToTask(project, set)
                     }
                 }
             }
+        }
+    }
+
+    private static def setToTask(project, set) {
+        project.task("insight${set.name.capitalize()}") {
+            group 'Package Insight'
+            description "Package insight for source set $set.name"
+            doLast {
+                def packageCollection = new PackageCollection()
+                println "Package insight for :$project.name Set $set.name"
+                if (set.hasProperty('java')) {
+                    println 'Java'
+                    set.java.srcDirs.each { dir -> importDir(dir, packageCollection) }
+                }
+                if (set.hasProperty('kotlin')) {
+                    println 'Kotlin'
+                    set.kotlin.srcDirs.each { dir -> importDir(dir, packageCollection) }
+                }
+                if (set.hasProperty('groovy')) {
+                    println 'Groovy'
+                    set.groovy.srcDirs.each { dir -> importDir(dir, packageCollection) }
+                }
+
+                println 'All packages:'
+                packageCollection.packages*.packageName*.name.sort().each { println "  $it" }
+            }
+        }
+    }
+
+    private static void importDir(dir, packageCollection) {
+        if (!dir.exists()) return
+        dir.eachFileRecurse(FileType.FILES) { file ->
+            String[] lines = file.readLines()
+            packageCollection.addSourceFile(SourceFile.fromLines(lines))
         }
     }
 }
