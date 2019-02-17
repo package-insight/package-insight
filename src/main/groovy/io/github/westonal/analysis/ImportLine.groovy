@@ -12,7 +12,7 @@ class ImportLine {
 
     static ImportLine fromLine(int lineNo, String line) {
         def trimmed = line.trim()
-        if (!trimmed.startsWith('import')) return null
+        if (!trimmed.startsWith('import ')) return null
         new ImportLine(
                 packageName: new PackageName(name: extractFromLine(trimmed)),
                 lineNo: lineNo,
