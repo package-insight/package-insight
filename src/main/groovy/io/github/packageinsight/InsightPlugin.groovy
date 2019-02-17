@@ -54,7 +54,9 @@ class InsightPlugin implements Plugin<Project> {
                 }
 
                 println 'All packages:'
-                packageCollection.packages*.packageName*.name.sort().each { println "  $it" }
+                packageCollection.packages.sort { -it.dependsOn.size() }.each { p ->
+                    println "  ${p.packageName} depends on ${p.dependsOn.size()} packages"
+                }
             }
         }
     }

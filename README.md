@@ -6,7 +6,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.package-insight:package-insight:0.0.1@jar'
+        classpath 'com.github.package-insight:package-insight:0.0.2@jar'
     }
 }
 
