@@ -5,7 +5,7 @@ import groovy.transform.Immutable
 @Immutable
 class SourceFile {
     PackageName packageName
-    ImportLine[] imports
+    List<ImportLine> imports
     Set<PackageName> importPackages
 
     static SourceFile fromLines(String[] s) {
