@@ -9,7 +9,7 @@ class SourceFileTests {
 
     @Test
     void readAJavaFile() {
-        def file = SourceFile.fromLines(resourceLines('sampleFiles/JavaExample_java.txt'))
+        def file = SourceFile.fromLines("JavaExample_java.txt", resourceLines('sampleFiles/JavaExample_java.txt'))
         assert new PackageName(name: 'io.github.example') == file.packageName
         assert file.imports == [
                 new ImportLine(packageName: new PackageName('java.io'), originalImport: 'import java.io.BufferedReader;', lineNo: 6),
@@ -21,11 +21,12 @@ class SourceFileTests {
                 [new PackageName('java.io'),
                  new PackageName('java.awt'),
                  new PackageName('java.beans')] as Set
+        assert file.fileName == "JavaExample_java.txt"
     }
 
     @Test
     void readAKotlinJavaFile() {
-        def file = SourceFile.fromLines(resourceLines('sampleFiles/KotlinExample_kt.txt'))
+        def file = SourceFile.fromLines("KotlinExample_kt.txt", resourceLines('sampleFiles/KotlinExample_kt.txt'))
         assert new PackageName(name: 'com.example.kotlin') == file.packageName
         assert file.imports == [
                 new ImportLine(packageName: new PackageName('java.util.zip'), originalImport: 'import java.util.zip.ZipFile', lineNo: 3),
@@ -45,11 +46,12 @@ class SourceFileTests {
                  new PackageName('java.io'),
                  new PackageName('java.nio.file'),
                  new PackageName('java.nio.file.attribute')] as Set
+        assert file.fileName == "KotlinExample_kt.txt"
     }
 
     @Test
     void immutable() {
-        def sourceFile = SourceFile.fromLines(resourceLines('sampleFiles/JavaExample_java.txt'))
+        def sourceFile = SourceFile.fromLines("JavaExample_java", resourceLines('sampleFiles/JavaExample_java.txt'))
         shouldFail {
             //noinspection GrFinalVariableAccess, GroovyAccessibility
             sourceFile.packageName = null

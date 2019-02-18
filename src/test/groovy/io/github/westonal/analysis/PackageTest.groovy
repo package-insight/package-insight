@@ -41,53 +41,53 @@ class PackageTest {
     @Test
     void dependsOn() {
         def pName = new PackageName('a')
-        ImportLine[] lines = [ImportLine.fromLine(1, "import b")]
+        def lines = [ImportLine.fromLine(1, "import b")]
         def p = new Package(pName)
-        p.addSourceFile(SourceFile.fromImports(pName, lines))
+        p.addSourceFile(SourceFile.fromImports("file", pName, lines))
         assert p.dependsOn == [new PackageName('b')] as Set
     }
 
     @Test
     void dependsOn2FromOneFile() {
         def pName = new PackageName('a')
-        ImportLine[] lines = [
+        def lines = [
                 ImportLine.fromLine(1, "import b"),
                 ImportLine.fromLine(2, "import c")
         ]
         def p = new Package(pName)
-        p.addSourceFile(SourceFile.fromImports(pName, lines))
+        p.addSourceFile(SourceFile.fromImports("file", pName, lines))
         assert p.dependsOn*.name as Set == ['b', 'c'] as Set
     }
 
     @Test
     void dependsOn2FromTwoFiles() {
         def pName = new PackageName('a')
-        ImportLine[] lines1 = [
+        def lines1 = [
                 ImportLine.fromLine(1, "import b")
         ]
-        ImportLine[] lines2 = [
+        def lines2 = [
                 ImportLine.fromLine(1, "import c")
         ]
         def p = new Package(pName)
-        p.addSourceFile(SourceFile.fromImports(pName, lines1))
-        p.addSourceFile(SourceFile.fromImports(pName, lines2))
+        p.addSourceFile(SourceFile.fromImports("file1", pName, lines1))
+        p.addSourceFile(SourceFile.fromImports("file2", pName, lines2))
         assert p.dependsOn*.name as Set == ['b', 'c'] as Set
     }
 
     @Test
     void dependsOn3FromTwoFilesIncludingDuplicates() {
         def pName = new PackageName('a')
-        ImportLine[] lines1 = [
+        def lines1 = [
                 ImportLine.fromLine(1, "import b"),
                 ImportLine.fromLine(2, "import d")
         ]
-        ImportLine[] lines2 = [
+        def lines2 = [
                 ImportLine.fromLine(1, "import c"),
                 ImportLine.fromLine(2, "import d")
         ]
         def p = new Package(pName)
-        p.addSourceFile(SourceFile.fromImports(pName, lines1))
-        p.addSourceFile(SourceFile.fromImports(pName, lines2))
+        p.addSourceFile(SourceFile.fromImports("file1", pName, lines1))
+        p.addSourceFile(SourceFile.fromImports("file2", pName, lines2))
         assert p.dependsOn*.name as Set == ['b', 'c', 'd'] as Set
     }
 }

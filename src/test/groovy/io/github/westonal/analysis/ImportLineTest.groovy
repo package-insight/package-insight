@@ -68,6 +68,11 @@ class ImportLineTest {
     }
 
     @Test
+    void notAnImportLine_2() {
+        assert ImportLine.fromLine(14, 'importService.something();') == null
+    }
+
+    @Test
     void leadingSpaceDoesNotMatter() {
         assert new ImportLine(
                 packageName: new PackageName(name: 'com.example'),
