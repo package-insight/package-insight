@@ -86,7 +86,7 @@ class InsightPlugin implements Plugin<Project> {
 
     private static void circularDependencyReport(PackageCollection packageCollection) {
         def start = System.currentTimeMillis()
-        def limit = 100
+        def limit = 1000
         def circular = new GraphBuilder().addPackageCollection(packageCollection)
                 .build()
                 .findCircular(limit + 1, { p1, p2 -> p1.name <=> p2.name })
