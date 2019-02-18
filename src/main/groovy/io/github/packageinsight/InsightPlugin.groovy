@@ -57,14 +57,31 @@ class InsightPlugin implements Plugin<Project> {
                     set.groovy.srcDirs.each { dir -> importDir(dir, packageCollection) }
                 }
 
-                println 'All packages:'
-                packageCollection.packages.sort { -it.dependsOn.size() }.each { p ->
-                    println "  ${p.packageName} depends on ${p.dependsOn.size()} packages"
-                }
-
                 circularDependencyReport(packageCollection)
+
+                listPackages(packageCollection)
             }
         }
+    }
+
+    private static void listPackages(PackageCollection packageCollection) {
+        println 'All packages:'
+        def allPackageNames = packageCollection.packages*.packageName
+        def dependencies = packageCollection.packages.collectEntries { p ->
+            [(p.packageName): p.dependsOn.intersect(allPackageNames)]
+        }.sort { -it.value.size() }
+        dependencies.findAll { !it.value.isEmpty() }.each { p ->
+            println "  ${p.key} depends on ${p.value.size()} internal packages"
+        }
+        def all = dependencies.findAll { it.value.isEmpty() }
+        if (!all.isEmpty()) {
+            println ''
+            println 'The following packages have no internal dependencies and are potential candidates for modularization'
+            all.each { p ->
+                println "  ${p.key}"
+            }
+        }
+        println ''
     }
 
     private static void circularDependencyReport(PackageCollection packageCollection) {
