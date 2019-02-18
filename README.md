@@ -10,12 +10,11 @@ buildscript {
     }
 }
 
-apply plugin: 'insight'
+apply plugin: 'package-insight'
 ```
 or:
 ```
 allprojects {
-   apply plugin: 'insight'
-
+   apply plugin: 'package-insight'
 }
 ```

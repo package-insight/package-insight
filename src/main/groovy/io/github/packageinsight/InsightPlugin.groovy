@@ -102,6 +102,7 @@ class InsightPlugin implements Plugin<Project> {
 
         if (reportedDependencyCount == 0) {
             println 'No circular package dependencies found.'
+            println ''
             return
         }
 
@@ -131,6 +132,7 @@ class InsightPlugin implements Plugin<Project> {
                 }
             }
         }
+        println ''
     }
 
     private static def printRef(CircularReference<PackageName> circularReference) {
