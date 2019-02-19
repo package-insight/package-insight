@@ -14,7 +14,7 @@ class CircularDetectionTest {
     @Test
     void oneEdge() {
         assert new Graph(edges: [
-                new Edge(1, 2)
+                edge(1, 2)
         ]
         ).findCircular(10) == []
     }
@@ -22,7 +22,7 @@ class CircularDetectionTest {
     @Test
     void selfReferencing() {
         assert new Graph(edges: [
-                new Edge(1, 1)
+                edge(1, 1)
         ]
         ).findCircular(10) == []
     }
@@ -30,126 +30,171 @@ class CircularDetectionTest {
     @Test
     void directCircularReference() {
         assert new Graph(edges: [
-                new Edge(1, 2),
-                new Edge(2, 1)
+                edge(1, 2),
+                edge(2, 1)
         ]
         ).findCircular(10) == [
-                circular([new Edge(1, 2),
-                          new Edge(2, 1)]
-                )
+                circular(1, 2)
         ]
     }
 
     @Test
     void indirectCircularReference() {
         assert new Graph(edges: [
-                new Edge(1, 2),
-                new Edge(2, 3),
-                new Edge(3, 1)
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 1)
         ]
         ).findCircular(10) == [
-                circular([new Edge(1, 2),
-                          new Edge(2, 3),
-                          new Edge(3, 1)]
-                )
+                circular(1, 2, 3)
         ]
     }
 
     @Test
     void twoCircularReferencesDisjoint() {
         assert new Graph(edges: [
-                new Edge(1, 2),
-                new Edge(2, 1),
-                new Edge(3, 4),
-                new Edge(4, 3)
+                edge(1, 2),
+                edge(2, 1),
+                edge(3, 4),
+                edge(4, 3)
         ]
         ).findCircular(10) == [
-                circular([new Edge(1, 2),
-                          new Edge(2, 1)]
-                ),
-                circular([new Edge(3, 4),
-                          new Edge(4, 3)]
-                )
+                circular(1, 2),
+                circular(3, 4)
         ]
     }
 
     @Test
     void twoCircularReferencesContainingSameEdge() {
         assert new Graph(edges: [
-                new Edge(1, 2),
-                new Edge(2, 1),
-                new Edge(1, 3),
-                new Edge(3, 1)
+                edge(1, 2),
+                edge(2, 1),
+                edge(1, 3),
+                edge(3, 1)
         ]
         ).findCircular(10) == [
-                circular([new Edge(1, 2),
-                          new Edge(2, 1)]
-                ),
-                circular([new Edge(1, 3),
-                          new Edge(3, 1)]
-                )
+                circular(1, 2),
+                circular(1, 3)
         ]
     }
 
     @Test
     void circularReferenceWithAdditionalEntryPoint() {
         assert new Graph(edges: [
-                new Edge(1, 2),
-                new Edge(2, 3),
-                new Edge(3, 4),
-                new Edge(4, 2)
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 4),
+                edge(4, 2)
         ]
         ).findCircular(10) == [
-                circular([new Edge(2, 3),
-                          new Edge(3, 4),
-                          new Edge(4, 2)]
-                )
+                circular(2, 3, 4)
         ]
     }
 
     @Test
     void twoCircularReferences() {
         assert new Graph(edges: [
-                new Edge(3, 4),
-                new Edge(1, 2),
-                new Edge(2, 3),
-                new Edge(3, 1),
-                new Edge(4, 5),
-                new Edge(5, 2)
+                edge(3, 4),
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 1),
+                edge(4, 5),
+                edge(5, 2)
         ]
         ).findCircular(10) == [
-                circular([new Edge(2, 3),
-                          new Edge(3, 4),
-                          new Edge(4, 5),
-                          new Edge(5, 2)]
-                ),
-                circular([new Edge(1, 2),
-                          new Edge(2, 3),
-                          new Edge(3, 1)]
-                )
+                circular(2, 3, 4, 5),
+                circular(1, 2, 3)
         ]
     }
 
     @Test
     void twoCircularReferencesLimit1() {
         assert new Graph(edges: [
-                new Edge(3, 4),
-                new Edge(1, 2),
-                new Edge(2, 3),
-                new Edge(3, 1),
-                new Edge(4, 5),
-                new Edge(5, 2)
+                edge(3, 4),
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 1),
+                edge(4, 5),
+                edge(5, 2)
         ]
         ).findCircular(1) == [
-                circular([new Edge(2, 3),
-                          new Edge(3, 4),
-                          new Edge(4, 5),
-                          new Edge(5, 2)]
-                )
+                circular(2, 3, 4, 5)
         ]
     }
 
-    static def circular(List<Edge> edges) {
+    @Test
+    void twoCircularReferencesWithShortCut() {
+        assert new Graph(edges: [
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 1),
+                edge(1, 3)
+        ]
+        ).findCircular(10) == [
+                circular(1, 2, 3),
+                circular(1, 3)
+        ]
+    }
+
+    @Test
+    void twoCircularReferencesWithShortCutFirst() {
+        assert new Graph(edges: [
+                edge(1, 3),
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 1)
+        ]
+        ).findCircular(10) == [
+                circular(1, 3),
+                circular(1, 2, 3)
+        ]
+    }
+
+    @Test
+    void twoCircularReferencesWithShortCut2() {
+        assert new Graph(edges: [
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 4),
+                edge(4, 1),
+                edge(2, 4),
+        ]
+        ).findCircular(10) == [
+                circular(1, 2, 3, 4),
+                circular(1, 2, 4)
+        ]
+    }
+
+    @Test
+    void circularReferencesInSquareWithCenterConnector() {
+        assert new Graph(edges: [
+                edge(1, 2),
+                edge(2, 3),
+                edge(3, 4),
+                edge(4, 1),
+                edge(5, 1),
+                edge(2, 5),
+                edge(3, 5),
+                edge(4, 5),
+        ]
+        ).findCircular(10) == [
+                circular(1, 2, 3, 4),
+                circular(1, 2, 3, 4, 5),
+                circular(1, 2, 3, 5),
+                circular(1, 2, 5),
+        ]
+    }
+
+
+    static Edge edge(int from, int to) {
+        new Edge(from, to)
+    }
+
+    static def circular(Integer... nodes) {
+        def edges = []
+        for (int i = 0; i < nodes.length; i++) {
+            edges.add(edge(nodes[i], nodes[(i + 1) % nodes.length]))
+        }
         new CircularReference(edges)
     }
 }
