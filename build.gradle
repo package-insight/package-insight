@@ -1,7 +1,29 @@
+import io.github.packageinsight.Level
+
+buildscript {
+    repositories {
+        maven { url 'https://jitpack.io' }
+    }
+    dependencies {
+        classpath 'com.github.package-insight:package-insight:0.0.3@jar'
+    }
+}
+
 plugins {
     id 'groovy'
     id 'java'
 }
+
+allprojects {
+    apply plugin: 'package-insight'
+}
+
+packageInsight {
+    circularDependency Level.Warning
+    listPackages true
+}
+
+check.dependsOn insight
 
 group 'io.github.westonal'
 version '1.0-SNAPSHOT'

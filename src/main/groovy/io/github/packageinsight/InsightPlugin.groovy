@@ -71,8 +71,6 @@ class InsightPlugin implements Plugin<Project> {
                 if (project.packageInsight.listPackages) {
                     listPackages(packageCollection)
                 }
-
-                println project.packageInsight.circularDependency
             }
         }
     }

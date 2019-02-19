@@ -23,8 +23,8 @@ allprojects {
 
 ```
 packageInsight {
-    circularDependency = 'Warning' // or 'Disabled' or 'Error'
-    listPackages = true
+    circularDependency Level.Warning // or Level.Disabled or Level.Error (import io.github.packageinsight.Level)
+    listPackages true
 }
 ```
 
@@ -37,6 +37,11 @@ However, it is accurate in detecting zero dependencies. Turning error at the sta
 ```
 check.dependsOn insight
 ```
+
+### listPackages
+
+Lists all packages in the source set and the number of dependencies they have. This will highlight packages with zero
+dependencies last as potential candidates for moving to other modules.
 
 ## Running
 ```
