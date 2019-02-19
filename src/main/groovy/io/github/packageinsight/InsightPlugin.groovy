@@ -7,22 +7,31 @@ import io.github.westonal.analysis.PackageName
 import io.github.westonal.analysis.SourceFile
 import io.github.westonal.analysis.graph.circular.CircularReference
 import io.github.westonal.analysis.graphbuilding.GraphBuilder
+import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+
+enum Level {
+    Disabled,
+    Warning,
+    Error
+}
+
+class InsightPluginExtension {
+    Level circularDependency
+    boolean listPackages
+}
 
 class InsightPlugin implements Plugin<Project> {
 
     @Override
     void apply(Project px) {
+        def insight = px.task('insight') {
+            group 'Package Insight'
+            description 'Package insight all'
+        }
+        px.extensions.create("packageInsight", InsightPluginExtension)
         px.afterEvaluate { project ->
-            def insight = project.task('insight') {
-                group 'Package Insight'
-                description 'Package insight supertask'
-                doLast {
-                    println 'Package insight supertask'
-                }
-            }
-
             if (project.hasProperty('android')) {
                 project.android.sourceSets.all { set ->
                     insight.dependsOn setToTask(project, set)
@@ -45,21 +54,25 @@ class InsightPlugin implements Plugin<Project> {
                 def packageCollection = new PackageCollection()
                 println "Package insight for :$project.name Set $set.name"
                 if (set.hasProperty('java')) {
-                    println 'Java'
                     set.java.srcDirs.each { dir -> importDir(dir, packageCollection) }
                 }
                 if (set.hasProperty('kotlin')) {
-                    println 'Kotlin'
                     set.kotlin.srcDirs.each { dir -> importDir(dir, packageCollection) }
                 }
                 if (set.hasProperty('groovy')) {
-                    println 'Groovy'
                     set.groovy.srcDirs.each { dir -> importDir(dir, packageCollection) }
                 }
 
-                circularDependencyReport(packageCollection)
+                Level level = project.packageInsight.circularDependency
+                if (level != null && level != Level.Disabled) {
+                    circularDependencyReport(packageCollection, level)
+                }
 
-                listPackages(packageCollection)
+                if (project.packageInsight.listPackages) {
+                    listPackages(packageCollection)
+                }
+
+                println project.packageInsight.circularDependency
             }
         }
     }
@@ -84,7 +97,7 @@ class InsightPlugin implements Plugin<Project> {
         println ''
     }
 
-    private static void circularDependencyReport(PackageCollection packageCollection) {
+    private static void circularDependencyReport(PackageCollection packageCollection, Level level) {
         def start = System.currentTimeMillis()
         def limit = 1000
         def circular = new GraphBuilder().addPackageCollection(packageCollection)
@@ -133,6 +146,9 @@ class InsightPlugin implements Plugin<Project> {
             }
         }
         println ''
+        if (level == Level.Error) {
+            throw new GradleException('Circular package dependencies found.')
+        }
     }
 
     private static def printRef(CircularReference<PackageName> circularReference) {
@@ -151,5 +167,4 @@ class InsightPlugin implements Plugin<Project> {
             packageCollection.addSourceFile(SourceFile.fromLines(file.toString(), lines))
         }
     }
-
 }
