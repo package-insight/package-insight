@@ -2,6 +2,7 @@ package io.github.packageinsight
 
 import groovy.io.FileType
 import io.github.packageinsight.reports.PackageListReport
+import io.github.packageinsight.reports.StronglyConnectedComponentReport
 import io.github.westonal.analysis.PackageCollection
 import io.github.westonal.analysis.SourceFile
 import org.gradle.api.Plugin
@@ -9,6 +10,8 @@ import org.gradle.api.Project
 
 class InsightPluginExtension {
     boolean listPackages
+    int stronglyConnectedComponentLimit
+    boolean printPackagesNotInScc
 }
 
 class InsightPlugin implements Plugin<Project> {
@@ -52,8 +55,31 @@ class InsightPlugin implements Plugin<Project> {
                     set.groovy.srcDirs.each { dir -> importDir(dir, packageCollection) }
                 }
 
+                boolean didSomething = false
+
                 if (project.packageInsight.listPackages) {
                     new PackageListReport().listPackages(packageCollection)
+                    didSomething = true
+                }
+
+                def sccLimit = (int) project.packageInsight.stronglyConnectedComponentLimit
+                if (sccLimit > 0) {
+                    new StronglyConnectedComponentReport().stronglyConnectedComponentsReport(
+                            packageCollection,
+                            sccLimit,
+                            (boolean) project.packageInsight.printPackagesNotInScc
+                    )
+                    didSomething = true
+                }
+
+                if (!didSomething) {
+                    println 'Nothing for package insight to do, set some options:'
+                    println ''
+                    println 'packageInsight {\n' +
+                            '    listPackages = true\n' +
+                            '    stronglyConnectedComponentLimit = 1\n' +
+                            '}'
+                    throw new RuntimeException("Nothing for package insight to do")
                 }
             }
         }

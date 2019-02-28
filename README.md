@@ -24,6 +24,8 @@ allprojects {
 ```
 packageInsight {
     listPackages true
+    stronglyConnectedComponentLimit = 1
+    printPackagesNotInScc = true
 }
 ```
 
@@ -31,6 +33,14 @@ packageInsight {
 
 Lists all packages in the source set and the number of dependencies they have. This will highlight packages with zero
 dependencies last as potential candidates for moving to other modules.
+
+### stronglyConnectedComponentLimit
+
+This identifies Circular Package References ([strongly connected components](https://en.wikipedia.org/wiki/Strongly_connected_component) on the graph of package dependencies), i.e. groups of packages that are interdependent. It will tell you about all of them and the task fails if exceeds the specified size.
+
+### printPackagesNotInScc
+
+Lists packages that were not identified in Circular Package References (Strongly Connected Components). 
 
 ## Running
 ```
