@@ -22,8 +22,8 @@ class GraphBuilderTest {
                 )
         ).build()
         assert graph.edges == [
-                edge(p('a'), p('b.a')),
-                edge(p('a'), p('b.b'))
+                edge('a->b.a'),
+                edge('a->b.b')
         ] as Set
     }
 
@@ -48,10 +48,10 @@ class GraphBuilderTest {
                 )
         ).build()
         assert graph.edges == [
-                edge(p('a'), p('b.a')),
-                edge(p('a'), p('b.b')),
-                edge(p('b'), p('a')),
-                edge(p('b'), p('c.a'))
+                edge('a->b.a'),
+                edge('a->b.b'),
+                edge('b->a'),
+                edge('b->c.a')
         ] as Set
     }
 
@@ -77,10 +77,37 @@ class GraphBuilderTest {
                 )
         ).build()
         assert graph.edges == [
-                edge(p('a'), p('b.a')),
-                edge(p('a'), p('b.b')),
-                edge(p('b'), p('a')),
-                edge(p('b'), p('c.a'))
+                edge('a->b.a'),
+                edge('a->b.b'),
+                edge('b->a'),
+                edge('b->c.a')
+        ] as Set
+    }
+
+    @Test
+    void addTwoSourceFilesByPackageCollectionWithoutExternal() {
+        def collection = packageCollection([
+                new SourceFile(
+                        packageName: p('a'),
+                        importPackages: [
+                                p('b.a'),
+                                p('b.b')
+                        ]
+                ),
+                new SourceFile(
+                        packageName: p('b'),
+                        importPackages: [
+                                p('c.a'),
+                                p('a')
+                        ]
+                )]
+        )
+        def graph = new GraphBuilder()
+                .addPackageCollection(collection)
+                .excludeExternalTo(collection.packages*.packageName)
+                .build()
+        assert graph.edges == [
+                edge('b->a')
         ] as Set
     }
 

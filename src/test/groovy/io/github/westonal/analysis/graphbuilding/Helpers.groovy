@@ -9,6 +9,12 @@ class Helpers {
         new Edge(from, to)
     }
 
+    static def edge(String e) {
+        def split = e.split(/->/)
+        assert split.length == 2
+        edge(p(split[0]), p(split[1]))
+    }
+
     static PackageName p(String packageName) {
         new PackageName(packageName)
     }

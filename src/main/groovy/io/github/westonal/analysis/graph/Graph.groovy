@@ -1,19 +1,18 @@
 package io.github.westonal.analysis.graph
 
-
 import groovy.transform.Immutable
-import io.github.westonal.analysis.graph.circular.CircularDetection
-import io.github.westonal.analysis.graph.circular.CircularReference
+import io.github.westonal.analysis.graph.scc.StronglyConnectedComponentDetection
+import io.github.westonal.analysis.graph.scc.StronglyConnectedComponent
 
 @Immutable
 class Graph<T> {
     Set<Edge<T>> edges
 
-    Collection<CircularReference<T>> findCircular(int limit, Comparator<T> comparator) {
-        new CircularDetection<>(this, limit, comparator).findCircular()
+    Collection<StronglyConnectedComponent<T>> findStronglyConnectedComponents(Comparator<T> comparator) {
+        new StronglyConnectedComponentDetection<>(this, comparator).findCircular()
     }
 
-    Collection<CircularReference<T>> findCircular(int limit) {
-        findCircular(limit, { o1, o2 -> o1 <=> o2 })
+    Set<StronglyConnectedComponent<T>> findStronglyConnectedComponents() {
+        findStronglyConnectedComponents({ o1, o2 -> o1 <=> o2 })
     }
 }

@@ -26,6 +26,12 @@ class GraphBuilder {
         this
     }
 
+    GraphBuilder excludeExternalTo(Collection<PackageName> packageNames) {
+        Set<PackageName> packageNameSet = packageNames.toSet()
+        edges.removeIf { !(it.to in packageNameSet) }
+        this
+    }
+
     Graph build() {
         new Graph(edges)
     }
