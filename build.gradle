@@ -1,11 +1,9 @@
-import io.github.packageinsight.Level
-
 buildscript {
     repositories {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.package-insight:package-insight:0.0.3@jar'
+        classpath 'com.github.package-insight:package-insight:0.0.4@jar'
     }
 }
 
@@ -19,8 +17,9 @@ allprojects {
 }
 
 packageInsight {
-    circularDependency Level.Warning
     listPackages true
+    stronglyConnectedComponentLimit 2
+    printPackagesNotInScc true
 }
 
 check.dependsOn insight

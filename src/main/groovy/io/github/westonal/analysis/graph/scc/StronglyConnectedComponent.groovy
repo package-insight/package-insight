@@ -10,6 +10,10 @@ class StronglyConnectedComponent<T> {
     Set<T> nodes
     Set<Edge<T>> edges
 
+    def size() {
+        nodes.size()
+    }
+
     @Override
     String toString() {
         edges.toString()

@@ -111,6 +111,43 @@ class GraphBuilderTest {
         ] as Set
     }
 
+    @Test
+    void scc() {
+        def scc = new GraphBuilder()
+                .addPackageCollection(
+                packageCollection([
+                        new SourceFile(
+                                packageName: p('a'),
+                                importPackages: [
+                                        p('b')
+                                ]
+                        ),
+                        new SourceFile(
+                                packageName: p('b'),
+                                importPackages: [
+                                        p('a')
+                                ]
+                        ),
+                        new SourceFile(
+                                packageName: p('d'),
+                                importPackages: [
+                                        p('e')
+                                ]
+                        )]
+                )
+        )
+                .build()
+                .findStronglyConnectedComponents(PackageSorting.byName)
+        assert scc.edges == [[edge('a->b'),
+                              edge('b->a')] as Set,
+                             [] as Set,
+                             [] as Set]
+        assert scc.nodes == [[p('a'),
+                              p('b')] as Set,
+                             [p('d')] as Set,
+                             [p('e')] as Set]
+    }
+
     static def packageCollection(List<SourceFile> sourceFiles) {
         def pc = new PackageCollection()
         sourceFiles.each { pc.addSourceFile(it) }
