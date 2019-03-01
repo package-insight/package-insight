@@ -1,12 +1,14 @@
 [![Build Status](https://travis-ci.org/package-insight/package-insight.svg?branch=master)](https://travis-ci.org/package-insight/package-insight)
 
+[![Jitpack](https://jitpack.io/v/package-insight/package-insight.svg)](https://jitpack.io/#package-insight/package-insight)
+
 ```
 buildscript {
     repositories {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.package-insight:package-insight:master-SNAPSHOT@jar'
+        classpath 'com.github.package-insight:package-insight:<version>@jar'
     }
 }
 
