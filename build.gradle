@@ -18,7 +18,7 @@ allprojects {
 
 packageInsight {
     listPackages true
-    stronglyConnectedComponentLimit 2
+    stronglyConnectedComponentLimit 1
     printPackagesNotInScc true
 }
 
