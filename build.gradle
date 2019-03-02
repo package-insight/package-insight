@@ -3,7 +3,7 @@ buildscript {
         maven { url 'https://jitpack.io' }
     }
     dependencies {
-        classpath 'com.github.package-insight:package-insight:0.0.5@jar'
+        classpath 'com.github.package-insight:package-insight:22d1ce9@jar'
     }
 }
 
@@ -20,6 +20,9 @@ packageInsight {
     listPackages true
     stronglyConnectedComponentLimit 1
     printPackagesNotInScc true
+    banned = [
+            'junit.framework'
+    ]
 }
 
 check.dependsOn insight

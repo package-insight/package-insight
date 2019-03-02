@@ -3,6 +3,7 @@ package io.github.packageinsight.plugin
 import groovy.io.FileType
 import io.github.packageinsight.analysis.code.PackageCollection
 import io.github.packageinsight.analysis.code.SourceFile
+import io.github.packageinsight.plugin.reports.BannedImportReport
 import io.github.packageinsight.plugin.reports.PackageListReport
 import io.github.packageinsight.reports.StronglyConnectedComponentReport
 import org.gradle.api.Plugin
@@ -12,6 +13,7 @@ class InsightPluginExtension {
     boolean listPackages
     int stronglyConnectedComponentLimit
     boolean printPackagesNotInScc
+    List banned
 }
 
 class InsightPlugin implements Plugin<Project> {
@@ -72,6 +74,10 @@ class InsightPlugin implements Plugin<Project> {
                     didSomething = true
                 }
 
+                if (BannedImportReport.findBanned(packageCollection, (List) project.packageInsight.banned)) {
+                    didSomething = true
+                }
+
                 if (!didSomething) {
                     println 'Nothing for package insight to do, set some options:'
                     println ''
@@ -79,6 +85,9 @@ class InsightPlugin implements Plugin<Project> {
                             '    listPackages true\n' +
                             '    stronglyConnectedComponentLimit 1\n' +
                             '    printPackagesNotInScc true\n' +
+                            '    banned = [\n' +
+                            '        \'junit.framework\'\n' +
+                            '    ]\n' +
                             '}'
                     throw new RuntimeException("Nothing for package insight to do")
                 }
