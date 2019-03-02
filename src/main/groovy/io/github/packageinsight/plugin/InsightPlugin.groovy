@@ -66,8 +66,8 @@ class InsightPlugin implements Plugin<Project> {
 
                 def sccLimit = (int) project.packageInsight.stronglyConnectedComponentLimit
                 if (sccLimit > 0) {
-                    new StronglyConnectedComponentReport().stronglyConnectedComponentsReport(
-                            packageCollection,
+                    new StronglyConnectedComponentReport(packageCollection: packageCollection)
+                            .stronglyConnectedComponentsReport(
                             sccLimit,
                             (boolean) project.packageInsight.printPackagesNotInScc
                     )
