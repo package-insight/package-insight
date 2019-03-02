@@ -83,12 +83,23 @@ class StronglyConnectedComponentReport {
         allImports.entrySet()
                 .sort { e -> -e.value.size() }
                 .each { entry ->
-            println "$entry.key has $entry.value.size imports over ${entry.value*.importLine*.packageName.toSet().size()} packages within the Strongly Connected Component"
-            entry.value.take(10)
+            def packages = entry.value*.importLine*.packageName.toSet()
+            println "$entry.key has $entry.value.size imports over ${packages.size()} packages within the Strongly Connected Component"
+            def limitedPackages = packages.take(10)
+            println "  First ${limitedPackages.size()} Packages:"
+            limitedPackages
+                    .sort { it }
+                    .each {
+                println "    ${it.name}"
+            }
+            def limitedImports = entry.value.take(10)
+            println "  First ${limitedImports.size()} Imports:"
+            limitedImports
                     .sort { it.sourceFile }
                     .each {
                 println "  ${it.sourceFile.fileName} L${it.importLine.lineNo}: ${it.importLine.originalImport}"
             }
+
             println ''
         }
     }
