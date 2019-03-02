@@ -3,6 +3,8 @@ package io.github.packageinsight.analysis.code
 import groovy.transform.EqualsAndHashCode
 import groovy.transform.Immutable
 
+import java.util.regex.Matcher
+
 @Immutable
 @EqualsAndHashCode
 class ImportLine {
@@ -11,36 +13,30 @@ class ImportLine {
     int lineNo
 
     static ImportLine fromLine(int lineNo, String line) {
-        def trimmed = line.trim()
-        if (!trimmed.startsWith('import ')) return null
+        def importPackage = extractFromLine(line)
+        if (importPackage == null) return null
         new ImportLine(
-                packageName: new PackageName(name: extractFromLine(trimmed)),
+                packageName: new PackageName(name: importPackage),
                 lineNo: lineNo,
                 originalImport: line
         )
     }
 
-    static String extractFromLine(String s) {
-        try {
-            if (s.endsWith(';')) s = s.substring(0, s.length() - 1)
-            def split = s.split(/\s+/)
-            if (split[1] == 'static') {
-                trimLast(trimLast(split[2]))
-            } else {
-                trimLast(split[1])
-            }
+    private static String extractFromLine(String s) {
+        // https://regex101.com/r/Nj45v9/4
+        Matcher group = (s =~ /^\s*(import|(typealias\s+[^\s]*\s*=))\s*(static)?\s*([a-z0-9.]+)\./)
+        if (group.size() == 1) {
+            return group[0][4]
         }
-        catch (Exception e) {
-            println "Error with line: " + s
-            throw e
-        }
+        return null
     }
 
-    static String trimLast(String s) {
-        s.split(/\./).takeWhile { allLowerNonStar(it) }.join('.')
-    }
-
-    static def allLowerNonStar(String s) {
-        s != '*' && s == s.toLowerCase(Locale.US)
+    static String extractPackageFromLine(String s) {
+        // https://regex101.com/r/zd0dsk/2
+        Matcher group = (s =~ /^\s*(package)\s*([a-z0-9.]+)/)
+        if (group.size() == 1) {
+            return group[0][2]
+        }
+        return null
     }
 }

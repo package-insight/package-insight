@@ -22,16 +22,20 @@ class SourceFile {
         )
     }
 
-    private static Collection<ImportLine> findImports(String[] strings) {
+    private static Collection<ImportLine> findImports(String[] allLines) {
         def importLines = new LinkedList<ImportLine>()
-        for (int i = 0; i < strings.length; i++) {
-            def line = ImportLine.fromLine(i + 1, strings[i])
+        for (int i = 0; i < allLines.length; i++) {
+            def line = ImportLine.fromLine(i + 1, allLines[i])
             if (line != null) importLines.add(line)
         }
         importLines
     }
 
-    private static PackageName findPackage(String[] s) {
-        new PackageName(name: ImportLine.extractFromLine(s.find { it.startsWith('package') }))
+    private static PackageName findPackage(String[] allLines) {
+        for (line in allLines) {
+            def packageName = ImportLine.extractPackageFromLine(line)
+            if (packageName != null) return new PackageName(name: packageName)
+        }
+        return null
     }
 }
